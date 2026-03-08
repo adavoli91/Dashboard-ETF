@@ -230,6 +230,7 @@ if __name__ == '__main__':
     if button == True:
         placeholder.empty()
         # st.set_page_config(layout = 'wide')
+        st.set_page_config(layout = 'wide')
         # ottieni dati versametni
         df_leg = leggi_dati_legenda(file = file)
         df_vers = leggi_dati_versamenti(file = file)
