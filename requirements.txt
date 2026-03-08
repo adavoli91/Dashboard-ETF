@@ -4,7 +4,8 @@ openpyxl
 pandas
 plotly
 pyyaml
+requests
 scikit-image
 scikit-learn
-streamlit
-yahooquery
+streamlit==1.43.0
+yahooquery==2.4.1
