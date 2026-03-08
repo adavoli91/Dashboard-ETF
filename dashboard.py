@@ -1,17 +1,8 @@
 import pandas as pd
 import plotly.graph_objects as go
 import yahooquery as yq
-import requests
 import streamlit as st
-import yahooquery.session_management as sm
 from typing import Tuple
-
-# Replace curl_cffi session with plain requests
-def patched_setup(session = None, url = None):
-    s = requests.Session()
-    s.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
-    return s
-sm.setup_session = patched_setup
 
 def prezzo_medio_carico(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -238,7 +229,7 @@ if __name__ == '__main__':
         button = st.button('Run', disabled=file is None)
     if button == True:
         placeholder.empty()
-        st.set_page_config(layout = 'wide')
+        # st.set_page_config(layout = 'wide')
         # ottieni dati versametni
         df_leg = leggi_dati_legenda(file = file)
         df_vers = leggi_dati_versamenti(file = file)
