@@ -237,11 +237,13 @@ class DashboardPAC:
         with placeholder.container():
             #
             scelta_file = st.radio("Scegli un'opzione", options = ['File di default', 'Caricamento file'], index = None)
+            # usa file di default
             if scelta_file == 'File di default':
                 password = st.text_input(label = 'Immettere la password: ')
                 if password == st.secrets['password']:
                     file_bytes = base64.b64decode(st.secrets['file_pac'])
                     file = io.BytesIO(file_bytes)
+            # carica file
             if scelta_file == 'Caricamento file':
                 st.markdown('''
                     Trascinare un foglio excel con le seguenti caratteristiche:
@@ -527,23 +529,33 @@ class DashboardLazy:
         '''
         placeholder = st.empty()
         with placeholder.container():
-            st.markdown('''
-                Trascinare un foglio excel con le seguenti caratteristiche:
-                - Un foglio chiamato "Composizione" con le seguenti colonne:
-                    - **Data**: contiene la data di acquisto;
-                    - Una colonna per ogni ETF (con il nome dato dall'ETF stesso) che indica il numero di quote
-                      possedute nel tempo.
-                - Un foglio chiamato "Prezzi acquisto-vendita" con le seguenti colonne:
-                    - **Data**: contiene la data di acquisto;
-                    - Una colonna per ogni ETF (con il nome dato dall'ETF stesso) che indica i prezzi medi di
-                      acquisto/vendita nel corso del tempo.
-                - Un foglio chiamato "Legenda" con le seguenti colonne:
-                    - **ISIN**: contiene il codice ISIN dell'ETF;
-                    - **Ticker**: contiene il ticker dell'ETF, seguito da ".MI".
-                ''')
-            file = st.file_uploader('Caricare file excel')
-            button = st.button('Run', disabled = file is None)
-        if button == True:
+            #
+            scelta_file = st.radio("Scegli un'opzione", options = ['File di default', 'Caricamento file'], index = None)
+            # usa file di default
+            if scelta_file == 'File di default':
+                password = st.text_input(label = 'Immettere la password: ')
+                if password == st.secrets['password']:
+                    file_bytes = base64.b64decode(st.secrets['file_lazy'])
+                    file = io.BytesIO(file_bytes)
+            # carica file
+            if scelta_file == 'Caricamento file':
+                st.markdown('''
+                    Trascinare un foglio excel con le seguenti caratteristiche:
+                    - Un foglio chiamato "Composizione" con le seguenti colonne:
+                        - **Data**: contiene la data di acquisto;
+                        - Una colonna per ogni ETF (con il nome dato dall'ETF stesso) che indica il numero di quote
+                          possedute nel tempo.
+                    - Un foglio chiamato "Prezzi acquisto-vendita" con le seguenti colonne:
+                        - **Data**: contiene la data di acquisto;
+                        - Una colonna per ogni ETF (con il nome dato dall'ETF stesso) che indica i prezzi medi di
+                          acquisto/vendita nel corso del tempo.
+                    - Un foglio chiamato "Legenda" con le seguenti colonne:
+                        - **ISIN**: contiene il codice ISIN dell'ETF;
+                        - **Ticker**: contiene il ticker dell'ETF, seguito da ".MI".
+                    ''')
+                file = st.file_uploader('Caricare file excel')
+                button_run = st.button('Run', disabled = file is None)
+        if (('button_run' in locals()) and (button_run == True)) or (('password' in locals()) and (password == st.secrets['password'])):
             placeholder.empty()
             #
             self.file = file
