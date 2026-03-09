@@ -2,6 +2,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import yahooquery as yq
 import streamlit as st
+import base64
+import io
 from plotly.subplots import make_subplots
 
 class DashboardPAC:
@@ -233,18 +235,25 @@ class DashboardPAC:
         '''
         placeholder = st.empty()
         with placeholder.container():
-            st.markdown('''
-                Trascinare un foglio excel con le seguenti caratteristiche:
-                - Un foglio chiamato "Versamenti" con le seguenti colonne:
-                    - **ETF**: contiene il codice ISIN dell'ETF;
-                    - **Data**: contiene la data di acquisto;
-                    - **Prezzo**: contiene il prezzo di acquisto;
-                    - **Quote**: contiene il numero di quote acquistate.
-                - Un foglio chiamato "Legenda" con le seguenti colonne:
-                    - **ISIN**: contiene il codice ISIN dell'ETF;
-                    - **Ticker**: contiene il ticker dell'ETF, seguito da ".MI".
-                ''')
-            file = st.file_uploader('Caricare file excel')
+            file = st.radio("Scegli un'opzione", options = ['File di default', 'Caricamento file'], index = None)
+            if file == 'File di default':
+                password = st.text_input(label = 'Immettere la password: ')
+                if password == st.secrets['PASSWORD']:
+                    file_bytes = base64.b64decode(st.secrets['DEFAULT_FILE'])
+                    file = io.BytesIO(file_bytes)
+            else:
+                st.markdown('''
+                    Trascinare un foglio excel con le seguenti caratteristiche:
+                    - Un foglio chiamato "Versamenti" con le seguenti colonne:
+                        - **ETF**: contiene il codice ISIN dell'ETF;
+                        - **Data**: contiene la data di acquisto;
+                        - **Prezzo**: contiene il prezzo di acquisto;
+                        - **Quote**: contiene il numero di quote acquistate.
+                    - Un foglio chiamato "Legenda" con le seguenti colonne:
+                        - **ISIN**: contiene il codice ISIN dell'ETF;
+                        - **Ticker**: contiene il ticker dell'ETF, seguito da ".MI".
+                    ''')
+                file = st.file_uploader('Caricare file excel')
             button = st.button('Run', disabled = file is None)
         if button == True:
             placeholder.empty()
