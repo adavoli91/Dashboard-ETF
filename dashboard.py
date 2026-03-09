@@ -79,7 +79,9 @@ class DashboardPAC:
         df_vers_piv['Prezzo medio di carico'] = df_vers_piv['Prezzo medio di carico'].ffill()
         df_vers_piv['Quote cumulate'] = df_vers_piv['Quote cumulate'].ffill().fillna(0).astype(int)
         df_vers_piv['Controvalore cumulato'] = df_vers_piv['Controvalore cumulato'].ffill().fillna(0)
+        #
         self.df_vers_piv = df_vers_piv
+        self.list_etf = df_vers_piv.columns.levels[1]
 
     def ottieni_dati_storici(self) -> None:
         '''
@@ -157,7 +159,6 @@ class DashboardPAC:
 
         Returns: None.
         '''
-        df_vers_piv = self.df_vers_piv.copy()
         df_rend = self.df_rend.copy()
         ticks = self.ticks.copy()
         ticktext = self.ticktext.copy()
@@ -168,7 +169,7 @@ class DashboardPAC:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis = {'title': {'text': 'Rendimento portafoglio (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, instr in enumerate(df_vers_piv.columns.levels[1]):
+        for i, instr in enumerate(self.list_etf):
             figure.add_trace(go.Scatter(x = df_rend.index, y = df_rend['Rendimento', instr], name = instr, line_color = dict_colori[i]))
         figure.add_trace(go.Scatter(x = df_rend.index, y = df_rend['Rendimento', 'Totale'], name = 'Totale', line_color = 'lime'))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
@@ -192,7 +193,7 @@ class DashboardPAC:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis = {'title': {'text': 'Controvalore portafoglio [€]', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, instr in enumerate(df_vers_piv.columns.levels[1]):
+        for i, instr in enumerate(self.list_etf):
             figure.add_trace(go.Scatter(x = df_vers_piv.index, y = df_vers_piv['Controvalore cumulato', instr], name = instr, line_color = dict_colori[i]))
         figure.add_trace(go.Scatter(x = df_vers_piv.index, y = df_vers_piv['Controvalore cumulato'].sum(axis = 1), name = 'Totale', line_color = 'lime'))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
@@ -345,6 +346,7 @@ class DashboardLazy:
         df_hist = pd.concat(df_hist, axis = 1).ffill(axis = 0)
         #
         self.df_hist = df_hist
+        self.list_etf = df_hist.columns
 
     def calcola_composizione_pesi(self) -> None:
         '''
@@ -432,7 +434,7 @@ class DashboardLazy:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis = {'title': {'text': 'Rendimento (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, etf in enumerate(df_hist.columns):
+        for i, etf in enumerate(self.list_etf):
             figure.add_trace(go.Scatter(x = df_contr_hist.index, y = ((df_hist - df_pmc_hist)/df_pmc_hist*100)[etf], name = etf, line_color = dict_colori[i]))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
@@ -455,7 +457,7 @@ class DashboardLazy:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}},
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis1 = {'title': {'text': 'Allocazione per strumento (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, etf in enumerate(df_pesi_hist.columns):
+        for i, etf in enumerate(self.list_etf):
             figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_pesi_hist[etf]*100, stackgroup = 'one', name = etf, line_color = dict_colori[i]))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
@@ -479,7 +481,7 @@ class DashboardLazy:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis1 = {'title': {'text': 'Controvalore per strumento (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, etf in enumerate(df_pesi_hist.columns):
+        for i, etf in enumerate(self.list_etf):
             figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_contr_hist[etf]/df_contr_hist.sum(axis = 1).values*100, stackgroup = 'one', name = etf,
                                         line_color = dict_colori[i]))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
