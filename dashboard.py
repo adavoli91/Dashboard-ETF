@@ -271,7 +271,7 @@ class DashboardPAC:
 if __name__ == '__main__':
     st.set_page_config(layout = 'wide')
     #
-    analisi = st.radio(label = 'Tipo di analisi', options = ['PAC', 'Lazy portfolio'])
+    analisi = st.radio(label = 'Tipo di analisi', options = [None, 'PAC', 'Lazy portfolio'])
     #
     if analisi == 'PAC':
         DashboardPAC().main()
