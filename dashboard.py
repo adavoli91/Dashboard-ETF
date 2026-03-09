@@ -479,7 +479,7 @@ class DashboardLazy:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis1 = {'title': {'text': 'Controvalore per strumento (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for etf in df_pesi_hist.columns:
+        for i, etf in enumerate(df_pesi_hist.columns):
             figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_contr_hist[etf]/df_contr_hist.sum(axis = 1).values*100, stackgroup = 'one', name = etf,
                                         line_color = dict_colori[i]))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
