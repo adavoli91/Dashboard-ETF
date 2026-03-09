@@ -241,7 +241,7 @@ class DashboardPAC:
                 if password == st.secrets['password']:
                     file_bytes = base64.b64decode(st.secrets['file_pac'])
                     file = io.BytesIO(file_bytes)
-            else:
+            if scelta_file == 'Caricamento file':
                 st.markdown('''
                     Trascinare un foglio excel con le seguenti caratteristiche:
                     - Un foglio chiamato "Versamenti" con le seguenti colonne:
