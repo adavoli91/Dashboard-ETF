@@ -235,6 +235,10 @@ class DashboardPAC:
         '''
         placeholder = st.empty()
         with placeholder.container():
+            button = False
+            file = None
+            st.write('AAAAAAAAAAAAAAAA')
+            #
             scelta_file = st.radio("Scegli un'opzione", options = ['File di default', 'Caricamento file'], index = None)
             if scelta_file == 'File di default':
                 password = st.text_input(label = 'Immettere la password: ')
