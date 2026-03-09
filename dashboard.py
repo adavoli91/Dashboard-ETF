@@ -370,8 +370,8 @@ class DashboardLazy:
             tick = yq.Ticker(ticker)
             df_temp = tick.history(period = 'max').reset_index().rename(columns = {'date': 'Data'})
             df_temp['Data'] = pd.to_datetime(df_temp['Data'].astype(str).str.split(' ').str[0])
-            df_temp = df_temp.set_index('Data')['close'].loc[self.df_pmc.index.min():]
-            df_temp = pd.DataFrame(df_temp).rename(columns = {'close': df_leg.loc[df_leg['Ticker'] == ticker, 'ISIN'].values[0]})
+            df_temp = df_temp.set_index('Data')['adjclose'].loc[self.df_pmc.index.min():]
+            df_temp = pd.DataFrame(df_temp).rename(columns = {'adjclose': df_leg.loc[df_leg['Ticker'] == ticker, 'ISIN'].values[0]})
             df_hist.append(df_temp)
         df_hist = pd.concat(df_hist, axis = 1).ffill(axis = 0)
         #
