@@ -476,6 +476,7 @@ class DashboardLazy:
 
         Returns: None.
         '''
+        df_leg = self.df_leg.copy()
         df_pesi_hist = self.df_pesi_hist.copy()
         ticks = self.ticks.copy()
         ticktext = self.ticktext.copy()
