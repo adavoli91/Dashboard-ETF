@@ -235,9 +235,6 @@ class DashboardPAC:
         '''
         placeholder = st.empty()
         with placeholder.container():
-            button = False
-            file = None
-            st.write('AAAAAAAAAAAAAAAA')
             #
             scelta_file = st.radio("Scegli un'opzione", options = ['File di default', 'Caricamento file'], index = None)
             if scelta_file == 'File di default':
@@ -245,7 +242,6 @@ class DashboardPAC:
                 if password == st.secrets['password']:
                     file_bytes = base64.b64decode(st.secrets['file_pac'])
                     file = io.BytesIO(file_bytes)
-                    button = True
             else:
                 st.markdown('''
                     Trascinare un foglio excel con le seguenti caratteristiche:
@@ -259,8 +255,8 @@ class DashboardPAC:
                         - **Ticker**: contiene il ticker dell'ETF, seguito da ".MI".
                     ''')
                 file = st.file_uploader('Caricare file excel')
-                button = st.button('Run', disabled = file is None)
-        if button == True:
+                button_run = st.button('Run', disabled = file is None)
+        if (('button_run' in locals()) and (button_run == True)) or (('password' in locals()) and (password == st.secrets['password'])):
             placeholder.empty()
             #
             self.file = file
