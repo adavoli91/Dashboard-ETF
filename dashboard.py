@@ -7,18 +7,18 @@ import io
 from plotly.subplots import make_subplots
 from matplotlib import colors
 
-def get_rgba(colore: str, opacity: float = 0) -> str:
+def get_rgba(colore: str, trasparenza: float = 0) -> str:
     '''
     Funzione per convertire il nome di un colore in RGBA.
 
     Args:
         colore: Nome del colore.
-        opacity: Opacità: 0 corrisponde a nessuna trasparenza, 1 a totalmente trasparente.
+        trasparenza: Opacità: 0 corrisponde a nessuna trasparenza, 1 a totalmente trasparente.
 
     Returns:
         rgba: Stringa contenente il codice RGBA del colore.
     '''
-    rgba = f'rgba{colors.to_rgba(color, 1 - opacity)}'
+    rgba = f'rgba{colors.to_rgba(colore, 1 - trasparenza)}'
     return rgba
 
 class DashboardPAC:
@@ -490,7 +490,8 @@ class DashboardLazy:
         for i, etf in enumerate(self.list_etf):
             figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_pesi_hist[etf]*100, stackgroup = 'one',
                                         name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})",
-                                        line_color = get_rgba(color = dict_colori[i], opacity = 0.5), fillcolor = get_rgba(color = dict_colori[i], opacity = 0.7)))
+                                        line_color = get_rgba(colore = dict_colori[i], trasparenza = 0.5),
+                                        fillcolor = get_rgba(colore = dict_colori[i], trasparenza = 0.7)))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
 
@@ -517,7 +518,8 @@ class DashboardLazy:
         for i, etf in enumerate(self.list_etf):
             figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_contr_hist[etf]/df_contr_hist.sum(axis = 1).values*100, stackgroup = 'one',
                                         name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})",
-                                        line_color = get_rgba(color = dict_colori[i], opacity = 0.5), fillcolor = get_rgba(color = dict_colori[i], opacity = 0.7)))
+                                        line_color = get_rgba(colore = dict_colori[i], trasparenza = 0.5),
+                                        fillcolor = get_rgba(colore = dict_colori[i], trasparenza = 0.7)))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
 
@@ -538,9 +540,9 @@ class DashboardLazy:
                                        yaxis1 = {'tickfont': {'size': 16}, 'autorange': 'reversed'}))
         figure.add_trace(go.Heatmap(x = [f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})" for etf in df_hist.columns],
                                     y = [f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})" for etf in df_hist.columns], z = df_hist.pct_change().corr(),
-                                    text = df_hist.pct_change().corr().values, texttemplate = '%{text:.3f}', textfont = {'size': 15, 'color': 'black'}, colorscale = 'Spectral_r',
-                                    zmin = -1, zmax = 1, colorbar = {'title': {'text': 'Correlazione', 'font': {'size': 16}}, 'tickfont': {'size': 14}},
-                                    xgap = 1, ygap = 1))
+                                    text = df_hist.pct_change().corr().values, texttemplate = '%{text:.3f}', textfont = {'size': 15, 'color': 'black'},
+                                    colorscale = 'Spectral_r', zmin = -1, zmax = 1,
+                                    colorbar = {'title': {'text': 'Correlazione', 'font': {'size': 16}}, 'tickfont': {'size': 14}}, xgap = 1, ygap = 1))
         st.plotly_chart(figure)
     
     def main(self) -> None:
