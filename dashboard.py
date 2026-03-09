@@ -238,8 +238,8 @@ class DashboardPAC:
             file = st.radio("Scegli un'opzione", options = ['File di default', 'Caricamento file'], index = None)
             if file == 'File di default':
                 password = st.text_input(label = 'Immettere la password: ')
-                if password == st.secrets['PASSWORD']:
-                    file_bytes = base64.b64decode(st.secrets['DEFAULT_FILE'])
+                if password == st.secrets['password ']:
+                    file_bytes = base64.b64decode(st.secrets['file_pac'])
                     file = io.BytesIO(file_bytes)
             else:
                 st.markdown('''
