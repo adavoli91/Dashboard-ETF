@@ -552,9 +552,9 @@ class DashboardLazy:
             st.header('Allocazione per strumento del portafoglio')
             self.grafico_allocazione()
             st.header('Controvalore degli strumenti in portafoglio')
-            self.grafico_controvalore
+            self.grafico_controvalore()
             st.header('Correlazione degli strumetni in portafoglio')
-            self.grafico_correlazione
+            self.grafico_correlazione()
 
 if __name__ == '__main__':
     st.set_page_config(layout = 'wide')
