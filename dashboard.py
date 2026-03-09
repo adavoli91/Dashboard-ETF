@@ -5,6 +5,21 @@ import streamlit as st
 import base64
 import io
 from plotly.subplots import make_subplots
+from matplotlib import colors
+
+def get_rgba(colore: str, opacity: float = 0) -> str:
+    '''
+    Funzione per convertire il nome di un colore in RGBA.
+
+    Args:
+        colore: Nome del colore.
+        opacity: Opacità: 0 corrisponde a nessuna trasparenza, 1 a totalmente trasparente.
+
+    Returns:
+        rgba: Stringa contenente il codice RGBA del colore.
+    '''
+    rgba = f'rgba{colors.to_rgba(color, 1 - opacity)}'
+    return rgba
 
 class DashboardPAC:
     def __init__(self) -> None:
@@ -434,6 +449,7 @@ class DashboardLazy:
 
         Returns: None.
         '''
+        df_leg = self.df_leg.copy()
         df_pmc_hist = self.df_pmc_hist.copy()
         df_hist = self.df_hist.copy()
         df_contr_hist = self.df_contr_hist.copy()
@@ -447,7 +463,8 @@ class DashboardLazy:
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis = {'title': {'text': 'Rendimento (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
         for i, etf in enumerate(self.list_etf):
-            figure.add_trace(go.Scatter(x = df_contr_hist.index, y = ((df_hist - df_pmc_hist)/df_pmc_hist*100)[etf], name = etf, line_color = dict_colori[i]))
+            figure.add_trace(go.Scatter(x = df_contr_hist.index, y = ((df_hist - df_pmc_hist)/df_pmc_hist*100)[etf],
+                                        name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})", line_color = dict_colori[i]))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
 
@@ -470,7 +487,9 @@ class DashboardLazy:
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis1 = {'title': {'text': 'Allocazione per strumento (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
         for i, etf in enumerate(self.list_etf):
-            figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_pesi_hist[etf]*100, stackgroup = 'one', name = etf, line_color = dict_colori[i]))
+            figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_pesi_hist[etf]*100, stackgroup = 'one',
+                                        name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})",
+                                        line_color = get_rgba(color = dict_colori[i], opacity = 0.5), fillcolor = get_rgba(color = dict_colori[i], opacity = 0.7)))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
 
@@ -482,6 +501,7 @@ class DashboardLazy:
 
         Returns: None.
         '''
+        df_leg = self.df_leg.copy()
         df_pesi_hist = self.df_pesi_hist.copy()
         df_contr_hist = self.df_contr_hist.copy()
         ticks = self.ticks.copy()
@@ -494,8 +514,9 @@ class DashboardLazy:
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis1 = {'title': {'text': 'Controvalore per strumento (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
         for i, etf in enumerate(self.list_etf):
-            figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_contr_hist[etf]/df_contr_hist.sum(axis = 1).values*100, stackgroup = 'one', name = etf,
-                                        line_color = dict_colori[i]))
+            figure.add_trace(go.Scatter(x = df_pesi_hist.index, y = df_contr_hist[etf]/df_contr_hist.sum(axis = 1).values*100, stackgroup = 'one',
+                                        name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})",
+                                        line_color = get_rgba(color = dict_colori[i], opacity = 0.5), fillcolor = get_rgba(color = dict_colori[i], opacity = 0.7)))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
 
@@ -507,13 +528,15 @@ class DashboardLazy:
 
         Returns: None.
         '''
+        df_leg = self.df_leg.copy()
         df_hist = self.df_hist.copy()
         #
         figure = go.Figure()
-        figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}},
-                                       xaxis = {'tickfont': {'size': 16}},
+        figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, height = 700,
+                                       xaxis = {'tickfont': {'size': 16}, 'tickangle': -90},
                                        yaxis1 = {'tickfont': {'size': 16}, 'autorange': 'reversed'}))
-        figure.add_trace(go.Heatmap(x = df_hist.pct_change().corr().columns, y = df_hist.pct_change().corr().index, z = df_hist.pct_change().corr(),
+        figure.add_trace(go.Heatmap(x = [f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})" for etf in df_hist.columns],
+                                    y = [f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})" for etf in df_hist.columns], z = df_hist.pct_change().corr(),
                                     text = df_hist.pct_change().corr().values, texttemplate = '%{text:.3f}', textfont = {'size': 15, 'color': 'black'}, colorscale = 'Spectral_r',
                                     zmin = -1, zmax = 1, colorbar = {'title': {'text': 'Correlazione', 'font': {'size': 16}}, 'tickfont': {'size': 14}},
                                     xgap = 1, ygap = 1))
