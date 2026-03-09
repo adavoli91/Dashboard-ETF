@@ -176,6 +176,7 @@ class DashboardPAC:
 
         Returns: None.
         '''
+        df_leg = self.df_leg.copy()
         df_rend = self.df_rend.copy()
         ticks = self.ticks.copy()
         ticktext = self.ticktext.copy()
@@ -186,8 +187,9 @@ class DashboardPAC:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis = {'title': {'text': 'Rendimento portafoglio (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, instr in enumerate(self.list_etf):
-            figure.add_trace(go.Scatter(x = df_rend.index, y = df_rend['Rendimento', instr], name = instr, line_color = dict_colori[i]))
+        for i, etf in enumerate(self.list_etf):
+            figure.add_trace(go.Scatter(x = df_rend.index, y = df_rend['Rendimento', etf], name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})",
+                                        line_color = dict_colori[i]))
         figure.add_trace(go.Scatter(x = df_rend.index, y = df_rend['Rendimento', 'Totale'], name = 'Totale', line_color = 'lime'))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
@@ -200,6 +202,7 @@ class DashboardPAC:
 
         Returns: None.
         '''
+        df_leg = self.df_leg.copy()
         df_vers_piv = self.df_vers_piv.copy()
         ticks = self.ticks.copy()
         ticktext = self.ticktext.copy()
@@ -210,8 +213,9 @@ class DashboardPAC:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis = {'title': {'text': 'Controvalore portafoglio [€]', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, instr in enumerate(self.list_etf):
-            figure.add_trace(go.Scatter(x = df_vers_piv.index, y = df_vers_piv['Controvalore cumulato', instr], name = instr, line_color = dict_colori[i]))
+        for i, etf in enumerate(self.list_etf):
+            figure.add_trace(go.Scatter(x = df_vers_piv.index, y = df_vers_piv['Controvalore cumulato', etf],
+                                        name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})", line_color = dict_colori[i]))
         figure.add_trace(go.Scatter(x = df_vers_piv.index, y = df_vers_piv['Controvalore cumulato'].sum(axis = 1), name = 'Totale', line_color = 'lime'))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
@@ -224,6 +228,7 @@ class DashboardPAC:
 
         Returns: None.
         '''
+        df_leg = self.df_leg.copy()
         df_vers_piv = self.df_vers_piv.copy()
         ticks = self.ticks.copy()
         ticktext = self.ticktext.copy()
@@ -234,9 +239,9 @@ class DashboardPAC:
         figure.update_layout(go.Layout(margin = {'l': 20, 't': 20, 'r': 20, 'b': 20}, template = 'plotly_dark', legend = {'font': {'size': 14}}, width = 1000,
                                        xaxis = {'title': {'text': 'Data', 'font': {'size': 20}}, 'tickfont': {'size': 16}},
                                        yaxis = {'title': {'text': 'Composizione portafoglio (%)', 'font': {'size': 20}}, 'tickfont': {'size': 16}}))
-        for i, instr in enumerate(df_vers_piv.columns.levels[1]):
-            figure.add_trace(go.Scatter(x = df_vers_piv.index, y = 100*df_vers_piv['Controvalore cumulato', instr]/df_vers_piv['Controvalore cumulato'].sum(axis = 1),
-                                        name = instr, line_color = dict_colori[i]))
+        for i, etf in enumerate(df_vers_piv.columns.levels[1]):
+            figure.add_trace(go.Scatter(x = df_vers_piv.index, y = 100*df_vers_piv['Controvalore cumulato', etf]/df_vers_piv['Controvalore cumulato'].sum(axis = 1),
+                                        name = f"{etf} ({df_leg.loc[df_leg['ISIN'] == etf, 'Ticker'].values[0]})", line_color = dict_colori[i]))
         figure.update_xaxes(tickvals = ticks, ticktext = ticktext)
         st.plotly_chart(figure)
     
