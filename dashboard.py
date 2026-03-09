@@ -346,8 +346,6 @@ class DashboardLazy:
         '''
         df_comp = pd.read_excel(self.file, sheet_name = 'Composizione').set_index('Data')
         df_prezzi = pd.read_excel(self.file, sheet_name = 'Prezzi acquisto-vendita').set_index('Data')
-        # lista strumenti
-        lista_etf_etc = [col for col in df_comp.columns if col != 'Data']
         # quote acquistate/vendute
         df_quote = df_comp.copy()
         df_quote.iloc[1:] = df_quote.diff().iloc[1:]
