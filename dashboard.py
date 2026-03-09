@@ -4,7 +4,7 @@ import yahooquery as yq
 import streamlit as st
 from typing import Tuple
 
-class PAC:
+class DashboardPAC:
     def __init__(self) -> None:
         '''
         Classe per implementare la dashboard relativa ad un PAC.
@@ -270,3 +270,8 @@ class PAC:
 
 if __name__ == '__main__':
     st.set_page_config(layout = 'wide')
+    #
+    analisi = st.radio(label = 'Tipo di analisi', options = ['PAC', 'Lazy portfolio'])
+    #
+    if analisi == 'PAC':
+        DashboardPAC().main()
