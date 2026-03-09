@@ -364,6 +364,8 @@ class DashboardLazy:
         self.df_contr_hist = df_hist*df_comp_hist
         # peso storico di ogni strumento
         self.df_pesi_hist = (df_pmc_hist*df_comp_hist)/(df_pmc_hist*df_comp_hist).sum(axis = 1).values.reshape(-1, 1)
+        #
+        self.df_pmc_hist = df_pmc_hist
 
     def tick_plot(self) -> None:
         '''
