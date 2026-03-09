@@ -39,7 +39,7 @@ class DashboardPAC:
 
         Returns: None.
         '''
-        self.df_leg = pd.read_excel(file, sheet_name = 'Legenda')
+        self.df_leg = pd.read_excel(self.file, sheet_name = 'Legenda')
 
     def leggi_dati_versamenti(self) -> None:
         '''
@@ -49,7 +49,7 @@ class DashboardPAC:
 
         Returns: None.
         '''
-        df_vers = pd.read_excel(file, sheet_name = 'Versamenti')
+        df_vers = pd.read_excel(self.file, sheet_name = 'Versamenti')
         # controvalore
         df_vers['Controvalore'] = df_vers['Prezzo']*df_vers['Quote']
         # calcolo prezzo medio di carico
